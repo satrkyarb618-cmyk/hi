@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>عرض نتائج المعسكر</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
+
+    body {
+      font-family: 'Tajawal', sans-serif;
+      background-color: #fff5f5;
+      color: #721c24;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 28px;
+      color: #c82333;
+      margin: 20px 0;
+    }
+
+    .swiper-container {
+      width: 100%;
+      max-width: 1200px;
+      margin: auto;
+      padding: 50px 0;
+      overflow: hidden;
+    }
+
+    .swiper-slide {
+      width: 120px;
+      height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.4s ease;
+    }
+
+    .student-card {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      position: relative;
+      overflow: hidden;
+      border: 4px solid #dc3545;
+      transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      animation: wave 3s ease-in-out infinite;
+      background: linear-gradient(45deg, #dc3545, #c82333);
+      box-shadow: 0 8px 25px rgba(220, 53, 69, 0.3);
+    }
+
+    .student-card:hover {
+      transform: scale(1.2) translateY(-10px);
+      box-shadow: 0 15px 35px rgba(220, 53, 69, 0.5);
+      border-width: 6px;
+    }
+
+    .student-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    .student-card:hover .student-img {
+      transform: scale(1.1);
+    }
+
+    .student-info {
+      position: absolute;
+      bottom: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(220, 53, 69, 0.95);
+      color: white;
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      white-space: nowrap;
+      opacity: 0;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    .student-card:hover .student-info {
+      opacity: 1;
+      bottom: -50px;
+    }
+
+    .student-shirts {
+      position: absolute;
+      top: -25px;
+      right: -15px;
+      background: #ffc107;
+      color: #721c24;
+      border-radius: 50%;
+      width: 35px;
+      height: 35px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: bold;
+      border: 3px solid white;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+      opacity: 0;
+      transform: scale(0);
+      transition: all 0.3s ease;
+    }
+
+    .student-card:hover .student-shirts {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    @keyframes wave {
+      0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+      }
+      25% {
+        transform: translateY(-5px) rotate(1deg);
+      }
+      50% {
+        transform: translateY(-2px) rotate(0deg);
+      }
+      75% {
+        transform: translateY(-8px) rotate(-1deg);
+      }
+    }
+
+    /* تأثير الموجة المتدرجة */
+    .swiper-slide:nth-child(2n) .student-card {
+      animation-delay: 0.5s;
+    }
+    .swiper-slide:nth-child(3n) .student-card {
+      animation-delay: 1s;
+    }
+    .swiper-slide:nth-child(4n) .student-card {
+      animation-delay: 1.5s;
+    }
+    .swiper-slide:nth-child(5n) .student-card {
+      animation-delay: 2s;
+    }
+
+    /* تأثيرات إضافية للمركز */
+    .swiper-slide-active .student-card {
+      transform: scale(1.1);
+      border-width: 5px;
+      box-shadow: 0 12px 30px rgba(220, 53, 69, 0.4);
+    }
+
+    .swiper-slide-next .student-card,
+    .swiper-slide-prev .student-card {
+      transform: scale(1.05);
+    }
+
+    /* تأثير النبضة للأيقونات */
+    @keyframes pulse {
+      0% { box-shadow: 0 8px 25px rgba(220, 53, 69, 0.3); }
+      50% { box-shadow: 0 8px 25px rgba(220, 53, 69, 0.6); }
+      100% { box-shadow: 0 8px 25px rgba(220, 53, 69, 0.3); }
+    }
+
+    .student-card:hover {
+      animation: pulse 1s infinite;
+    }
+
+    /* تصميم متجاوب للشاشات الصغيرة */
+    @media (max-width: 768px) {
+      .swiper-container {
+        padding: 30px 0;
+      }
+      
+      .student-card {
+        width: 80px;
+        height: 80px;
+      }
+      
+      .swiper-slide {
+        width: 100px;
+        height: 100px;
+      }
+      
+      .student-info {
+        font-size: 10px;
+        padding: 5px 10px;
+      }
+      
+      .student-shirts {
+        width: 25px;
+        height: 25px;
+        font-size: 10px;
+        top: -20px;
+        right: -10px;
+      }
+    }
+
+    audio {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>معسكر فتيان إعدادي 2025 بسفاجا</h1>
+
+  <div class="swiper-container">
+    <div class="swiper-wrapper" id="students-wrapper"></div>
+    <div class="swiper-pagination"></div>
+  </div>
+
+  <!-- مشغل الموسيقى التلقائي -->
+  <audio id="bg-music" autoplay loop>
+    <source src="https://www.bensound.com/bensound-music/bensound-sunny.mp3" type="audio/mp3">
+    متصفحك لا يدعم الصوت.
+  </audio>
+
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    const sheetID = "12JYbjCcFDY9YZJrJbFJzoQpOkKCh5jL1tap0HR7MDdk";
+    const url = `https://opensheet.elk.sh/${sheetID}/Sheet1`;
+
+    async function loadStudents() {
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+
+        const seen = new Set();
+        const uniqueStudents = data.filter(row => {
+          const name = row["الاسم ثلاثي"];
+          if (name && !seen.has(name)) {
+            seen.add(name);
+            return true;
+          }
+          return false;
+        });
+
+        const wrapper = document.getElementById("students-wrapper");
+        uniqueStudents.forEach(row => {
+          const slide = document.createElement("div");
+          slide.className = "swiper-slide";
+          slide.innerHTML = `
+            <div class="student-card">
+              <img class="student-img" src="${row["image"] || 'https://via.placeholder.com/100x100/dc3545/white?text=صورة'}" alt="${row["الاسم ثلاثي"] || ""}" />
+              <div class="student-info">${row["الاسم ثلاثي"] || ""}</div>
+              <div class="student-shirts">${row["عدد الطايوهات"] || "0"}</div>
+            </div>
+          `;
+          wrapper.appendChild(slide);
+        });
+
+        new Swiper('.swiper-container', {
+          loop: true,
+          autoplay: {
+            delay: 2000,
+            disableOnInteraction: false,
+            pauseOnMouseEnter: true
+          },
+          pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+            dynamicBullets: true
+          },
+          slidesPerView: 'auto',
+          spaceBetween: 20,
+          centeredSlides: true,
+          speed: 800,
+          grabCursor: true,
+          breakpoints: {
+            320: {
+              slidesPerView: 3,
+              spaceBetween: 15
+            },
+            768: {
+              slidesPerView: 5,
+              spaceBetween: 20
+            },
+            1024: {
+              slidesPerView: 7,
+              spaceBetween: 25
+            },
+            1200: {
+              slidesPerView: 9,
+              spaceBetween: 30
+            }
+          }
+        });
+
+      } catch (error) {
+        console.error("فشل في تحميل البيانات:", error);
+      }
+    }
+
+    // محاولة التشغيل التلقائي بعد تفاعل المستخدم (للمتصفحات التي تمنع الصوت)
+    document.addEventListener('click', () => {
+      const audio = document.getElementById("bg-music");
+      if (audio && audio.paused) {
+        audio.play().catch(e => {});
+      }
+    });
+
+    loadStudents();
+  </script>
+</body>
+</html>
