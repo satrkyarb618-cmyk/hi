@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>عرض نتائج المعسكر</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Tajawal', sans-serif;
+      background: linear-gradient(135deg, #fff5f5 0%, #ffe1e4 100%);
+      color: #721c24;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+      min-height: 100vh;
+    }
+
+    h1 {
+      font-size: 32px;
+      color: #c82333;
+      margin: 30px 0;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+      font-weight: 700;
+    }
+
+    .swiper {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      padding-bottom: 50px;
+      overflow: visible;
+    }
+
+    .swiper-slide {
+      background: linear-gradient(145deg, #dc3545, #c82333);
+      color: white;
+      border-radius: 25px;
+      padding: 25px;
+      box-shadow: 0 8px 25px rgba(220, 53, 69, 0.3);
+      width: 320px;
+      height: 650px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-around;
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .swiper-slide::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+      transform: rotate(45deg);
+      transition: all 0.6s ease;
+      opacity: 0;
+    }
+
+    .swiper-slide:hover::before {
+      opacity: 1;
+      animation: shine 1.5s ease-in-out;
+    }
+
+    @keyframes shine {
+      0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+      100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+    }
+
+    .swiper-slide:hover {
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 15px 35px rgba(220, 53, 69, 0.4);
+    }
+
+    .student-img {
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      border: 6px solid rgba(255, 255, 255, 0.9);
+      object-fit: cover;
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .swiper-slide:hover .student-img {
+      transform: scale(1.05);
+      border-color: white;
+    }
+
+    .student-name {
+      font-size: 26px;
+      font-weight: 700;
+      margin: 15px 0;
+      text-align: center;
+      line-height: 1.3;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    }
+
+    .student-shirts {
+      background: rgba(255, 255, 255, 0.25);
+      padding: 12px 24px;
+      border-radius: 30px;
+      margin-top: 20px;
+      font-size: 22px;
+      font-weight: 600;
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .swiper-slide:hover .student-shirts {
+      background: rgba(255, 255, 255, 0.35);
+      transform: scale(1.05);
+    }
+
+    .swiper-pagination {
+      bottom: 10px !important;
+    }
+
+    .swiper-pagination-bullet {
+      background: #dc3545;
+      opacity: 0.7;
+      width: 12px;
+      height: 12px;
+    }
+
+    .swiper-pagination-bullet-active {
+      opacity: 1;
+      background: #c82333;
+      transform: scale(1.2);
+    }
+
+    .loading-spinner {
+      display: inline-block;
+      width: 50px;
+      height: 50px;
+      border: 3px solid rgba(220, 53, 69, 0.3);
+      border-radius: 50%;
+      border-top-color: #dc3545;
+      animation: spin 1s ease-in-out infinite;
+      margin: 50px auto;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .error-message {
+      background: #f8d7da;
+      color: #721c24;
+      padding: 20px;
+      border-radius: 15px;
+      margin: 20px auto;
+      max-width: 500px;
+      border: 2px solid #f5c6cb;
+    }
+
+    audio {
+      display: none;
+    }
+
+    .music-control {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+      transition: all 0.3s ease;
+    }
+
+    .music-control:hover {
+      background: #c82333;
+      transform: scale(1.1);
+    }
+
+    /* تحسينات للشاشات الصغيرة */
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+      
+      h1 {
+        font-size: 24px;
+        margin: 20px 0;
+      }
+      
+      .swiper-slide {
+        width: 280px;
+        height: 600px;
+        padding: 20px;
+      }
+      
+      .student-img {
+        width: 180px;
+        height: 180px;
+      }
+      
+      .student-name {
+        font-size: 22px;
+      }
+      
+      .student-shirts {
+        font-size: 18px;
+        padding: 10px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🏕️ معسكر فتيان إعدادي 2025 بسفاجا 🏕️</h1>
+
+  <div id="loading" class="loading-spinner"></div>
+  <div id="error-container"></div>
+
+  <div class="swiper" id="students-swiper" style="display: none;">
+    <div class="swiper-wrapper" id="students-wrapper"></div>
+    <div class="swiper-pagination"></div>
+  </div>
+
+  <!-- مشغل الموسيقى التلقائي -->
+  <audio id="bg-music" loop>
+    <source src="https://www.bensound.com/bensound-music/bensound-sunny.mp3" type="audio/mp3">
+    متصفحك لا يدعم الصوت.
+  </audio>
+
+  <button class="music-control" id="music-toggle" title="تشغيل/إيقاف الموسيقى">🎵</button>
+
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    const sheetID = "12JYbjCcFDY9YZJrJbFJzoQpOkKCh5jL1tap0HR7MDdk";
+    const url = `https://opensheet.elk.sh/${sheetID}/Sheet1`;
+    
+    let swiper;
+    let musicPlaying = false;
+
+    async function loadStudents() {
+      const loadingElement = document.getElementById("loading");
+      const errorContainer = document.getElementById("error-container");
+      const swiperElement = document.getElementById("students-swiper");
+
+      try {
+        console.log("جارٍ تحميل البيانات...");
+        const res = await fetch(url);
+        
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        
+        const data = await res.json();
+        console.log("تم تحميل البيانات:", data);
+
+        if (!Array.isArray(data) || data.length === 0) {
+          throw new Error("لا توجد بيانات متاحة");
+        }
+
+        // تصفية الطلاب الفريدين
+        const seen = new Set();
+        const uniqueStudents = data.filter(row => {
+          const name = row["الاسم ثلاثي"];
+          if (name && name.trim() !== "" && !seen.has(name)) {
+            seen.add(name);
+            return true;
+          }
+          return false;
+        });
+
+        console.log("عدد الطلاب الفريدين:", uniqueStudents.length);
+
+        if (uniqueStudents.length === 0) {
+          throw new Error("لا توجد بيانات طلاب صحيحة");
+        }
+
+        const wrapper = document.getElementById("students-wrapper");
+        wrapper.innerHTML = ""; // مسح المحتوى السابق
+
+        uniqueStudents.forEach((row, index) => {
+          const slide = document.createElement("div");
+          slide.className = "swiper-slide";
+          
+          const imageUrl = row["image"] && row["image"].trim() !== "" 
+            ? row["image"] 
+            : `https://ui-avatars.com/api/?name=${encodeURIComponent(row["الاسم ثلاثي"] || "طالب")}&background=dc3545&color=fff&size=250&font-size=0.6`;
+          
+          const shirtsCount = row["عدد الطايوهات"] || "0";
+          
+          slide.innerHTML = `
+            <img class="student-img" 
+                 src="${imageUrl}" 
+                 alt="${row["الاسم ثلاثي"] || 'طالب'}"
+                 onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(row["الاسم ثلاثي"] || "طالب")}&background=dc3545&color=fff&size=250&font-size=0.6'" />
+            <div class="student-name">${row["الاسم ثلاثي"] || "غير محدد"}</div>
+            <div class="student-shirts">👕 الطايوهات: ${shirtsCount}</div>
+          `;
+          wrapper.appendChild(slide);
+        });
+
+        // إخفاء اللودر وإظهار السلايدر
+        loadingElement.style.display = "none";
+        swiperElement.style.display = "block";
+
+        // تشغيل Swiper
+        initializeSwiper();
+
+      } catch (error) {
+        console.error("خطأ في تحميل البيانات:", error);
+        loadingElement.style.display = "none";
+        errorContainer.innerHTML = `
+          <div class="error-message">
+            <h3>⚠️ خطأ في تحميل البيانات</h3>
+            <p>${error.message}</p>
+            <button onclick="loadStudents()" style="background: #dc3545; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 10px;">المحاولة مرة أخرى</button>
+          </div>
+        `;
+      }
+    }
+
+    function initializeSwiper() {
+      swiper = new Swiper('.swiper', {
+        loop: true,
+        autoplay: {
+          delay: 4000,
+          disableOnInteraction: false,
+          pauseOnMouseEnter: true
+        },
+        pagination: {
+          el: '.swiper-pagination',
+          clickable: true,
+          dynamicBullets: true
+        },
+        slidesPerView: 'auto',
+        centeredSlides: true,
+        spaceBetween: 30,
+        effect: 'coverflow',
+        coverflowEffect: {
+          rotate: 25,
+          stretch: 0,
+          depth: 350,
+          modifier: 1,
+          slideShadows: true
+        },
+        breakpoints: {
+          320: {
+            spaceBetween: 20,
+            coverflowEffect: {
+              rotate: 20,
+              depth: 250
+            }
+          },
+          768: {
+            spaceBetween: 30,
+            coverflowEffect: {
+              rotate: 25,
+              depth: 350
+            }
+          }
+        }
+      });
+
+      console.log("تم تشغيل السلايدر بنجاح");
+    }
+
+    // التحكم في الموسيقى
+    function setupMusicControl() {
+      const audio = document.getElementById("bg-music");
+      const musicToggle = document.getElementById("music-toggle");
+
+      musicToggle.addEventListener('click', () => {
+        if (musicPlaying) {
+          audio.pause();
+          musicToggle.textContent = "🔇";
+          musicToggle.title = "تشغيل الموسيقى";
+          musicPlaying = false;
+        } else {
+          audio.play().then(() => {
+            musicToggle.textContent = "🎵";
+            musicToggle.title = "إيقاف الموسيقى";
+            musicPlaying = true;
+          }).catch(e => {
+            console.log("فشل تشغيل الموسيقى:", e);
+          });
+        }
+      });
+
+      // محاولة التشغيل التلقائي بعد تفاعل المستخدم
+      document.addEventListener('click', () => {
+        if (!musicPlaying && audio.paused) {
+          audio.play().then(() => {
+            musicToggle.textContent = "🎵";
+            musicToggle.title = "إيقاف الموسيقى";
+            musicPlaying = true;
+          }).catch(e => {
+            console.log("فشل التشغيل التلقائي للموسيقى");
+          });
+        }
+      }, { once: true });
+    }
+
+    // تشغيل التطبيق
+    document.addEventListener('DOMContentLoaded', () => {
+      loadStudents();
+      setupMusicControl();
+    });
+  </script>
+</body>
+</html>
