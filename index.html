@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>عرض نتائج المعسكر</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
+
+    body {
+      font-family: 'Tajawal', sans-serif;
+      background-color: #fff5f5;
+      color: #721c24;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 28px;
+      color: #c82333;
+      margin: 20px 0;
+    }
+
+    .swiper-container {
+      width: 100%;
+      max-width: 700px;
+      margin: auto;
+      padding-bottom: 40px;
+    }
+
+    .swiper-slide {
+      background: #dc3545;
+      color: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin: 10px auto;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      width: 300px;
+      height: 700px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s ease;
+    }
+
+    .swiper-slide:hover {
+      transform: scale(1.03);
+    }
+
+    .student-img {
+      width: 250px;
+      height: 250px;
+      border-radius: 12px;
+      border: 4px solid white;
+      object-fit: cover;
+      margin-bottom: 20px;
+    }
+
+    .student-name {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .student-shirts {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 8px 18px;
+      border-radius: 25px;
+      margin-top: 15px;
+      font-size: 20px;
+    }
+
+    audio {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>معسكر فتيان إعدادي 2025 بسفاجا</h1>
+
+  <div class="swiper-container">
+    <div class="swiper-wrapper" id="students-wrapper"></div>
+    <div class="swiper-pagination"></div>
+  </div>
+
+  <!-- مشغل الموسيقى التلقائي -->
+  <audio id="bg-music" autoplay loop>
+    <source src="https://www.bensound.com/bensound-music/bensound-sunny.mp3" type="audio/mp3">
+    متصفحك لا يدعم الصوت.
+  </audio>
+
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    const sheetID = "12JYbjCcFDY9YZJrJbFJzoQpOkKCh5jL1tap0HR7MDdk";
+    const url = `https://opensheet.elk.sh/${sheetID}/Sheet1`;
+
+    async function loadStudents() {
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+
+        const seen = new Set();
+        const uniqueStudents = data.filter(row => {
+          const name = row["الاسم ثلاثي"];
+          if (name && !seen.has(name)) {
+            seen.add(name);
+            return true;
+          }
+          return false;
+        });
+
+        const wrapper = document.getElementById("students-wrapper");
+        uniqueStudents.forEach(row => {
+          const slide = document.createElement("div");
+          slide.className = "swiper-slide";
+          slide.innerHTML = `
+            <img class="student-img" src="${row["image"] || 'https://via.placeholder.com/250'}" />
+            <div class="student-name">${row["الاسم ثلاثي"] || ""}</div>
+            <div class="student-shirts">👕 الطايوهات: ${row["عدد الطايوهات"] || "0"}</div>
+          `;
+          wrapper.appendChild(slide);
+        });
+
+        new Swiper('.swiper-container', {
+          loop: true,
+          autoplay: {
+            delay: 3000,
+            disableOnInteraction: false
+          },
+          pagination: {
+            el: '.swiper-pagination',
+            clickable: true
+          },
+          slidesPerView: 'auto',
+          centeredSlides: true,
+          effect: 'coverflow',
+          coverflowEffect: {
+            rotate: 20,
+            stretch: 0,
+            depth: 300,
+            modifier: 1,
+            slideShadows: true
+          }
+        });
+
+      } catch (error) {
+        console.error("فشل في تحميل البيانات:", error);
+      }
+    }
+
+    // محاولة التشغيل التلقائي بعد تفاعل المستخدم (للمتصفحات التي تمنع الصوت)
+    document.addEventListener('click', () => {
+      const audio = document.getElementById("bg-music");
+      if (audio && audio.paused) {
+        audio.play().catch(e => {});
+      }
+    });
+
+    loadStudents();
+  </script>
+</body>
+</html>
